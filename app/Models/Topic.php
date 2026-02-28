@@ -19,18 +19,24 @@ class Topic extends Model
         'is_active',
         'include_document',
         'video_url',
-        'duration_minutes',
+        'duration',
+        'notes',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'include_document' => 'boolean',
-        'duration_minutes' => 'integer',
+        'duration' => 'integer',
     ];
 
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(TopicFile::class);
     }
 
     public function materials(): HasMany

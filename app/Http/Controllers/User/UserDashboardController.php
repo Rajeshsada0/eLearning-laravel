@@ -16,11 +16,6 @@ use Inertia\Inertia;
 
 class UserDashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:student']);
-    }
-
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -33,13 +28,6 @@ class UserDashboardController extends Controller
 
         $recentTests = TestResult::with('mockTest')
             ->where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $progress = Progress::with('course')
-            ->where('user_id', $user->id)
-            ->whereNotNull('completed_at')
             ->latest()
             ->take(5)
             ->get();
@@ -161,6 +149,33 @@ class UserDashboardController extends Controller
         return Inertia::render('user/study-materials', [
             'materials' => $materials,
             'filters' => $request->only(['type']),
+        ]);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+        
+        return Inertia::render('user/profile', [
+            'user' => $user,
+        ]);
+    }
+
+    public function settings(Request $request)
+    {
+        $user = Auth::user();
+        
+        return Inertia::render('user/settings', [
+            'user' => $user,
+        ]);
+    }
+
+    public function support(Request $request)
+    {
+        $user = Auth::user();
+        
+        return Inertia::render('user/support', [
+            'user' => $user,
         ]);
     }
 }

@@ -14,11 +14,6 @@ use Inertia\Inertia;
 
 class InstructorDashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:instructor']);
-    }
-
     public function index(Request $request)
     {
         $instructor = Auth::user();
@@ -173,5 +168,267 @@ class InstructorDashboardController extends Controller
             'monthlyEnrollments' => $monthlyEnrollments,
             'testPerformance' => $testPerformance,
         ]);
+    }
+
+    public function createCourse()
+    {
+        $categories = \App\Models\Category::all();
+        return Inertia::render('instructor/courses/create', [
+            'categories' => $categories,
+        ]);
+    }
+
+    public function storeCourse(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'nullable|numeric|min:0',
+            'is_free' => 'boolean',
+            'is_active' => 'boolean',
+            'requirements' => 'nullable|string',
+            'what_you_learn' => 'nullable|string',
+            'target_audience' => 'nullable|string',
+            'language' => 'required|string',
+            'level' => 'required|string|in:beginner,intermediate,advanced',
+            'duration_weeks' => 'nullable|integer|min:1',
+        ]);
+
+        $course = Course::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
+            'instructor_id' => Auth::id(),
+            'price' => $validated['is_free'] ? 0 : $validated['price'],
+            'is_free' => $validated['is_free'],
+            'is_active' => $validated['is_active'],
+            'requirements' => $validated['requirements'],
+            'what_you_learn' => $validated['what_you_learn'],
+            'target_audience' => $validated['target_audience'],
+            'language' => $validated['language'],
+            'level' => $validated['level'],
+            'duration_weeks' => $validated['duration_weeks'],
+            'slug' => \Str::slug($validated['title']),
+        ]);
+
+        return redirect()->route('instructor.courses')->with('success', 'Course created successfully!');
+    }
+
+    public function showCourse(Course $course)
+    {
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $course->load(['category', 'enrollments.user', 'topics.files']);
+
+        return Inertia::render('instructor/courses/show', [
+            'course' => $course,
+        ]);
+    }
+
+    public function editCourse(Course $course)
+    {
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $categories = \App\Models\Category::all();
+        
+        return Inertia::render('instructor/courses/edit', [
+            'course' => $course->load(['topics.files']),
+            'categories' => $categories,
+        ]);
+    }
+
+    public function updateCourse(Request $request, Course $course)
+    {
+        if ($course->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'nullable|numeric|min:0',
+            'is_free' => 'boolean',
+            'is_active' => 'boolean',
+            'requirements' => 'nullable|string',
+            'what_you_learn' => 'nullable|string',
+            'target_audience' => 'nullable|string',
+            'language' => 'required|string',
+            'level' => 'required|string|in:beginner,intermediate,advanced',
+            'duration_weeks' => 'nullable|integer|min:1',
+            'topics' => 'nullable|array',
+            'topics.*.title' => 'required|string|max:255',
+            'topics.*.description' => 'nullable|string',
+            'topics.*.duration' => 'nullable|integer|min:1',
+            'topics.*.order' => 'required|integer|min:1',
+            'topics.*.video_url' => 'nullable|url',
+            'topics.*.notes' => 'nullable|string',
+            'topics.*.files' => 'nullable|array',
+            'topics.*.files.*' => 'nullable|file|max:10240', // 10MB max per file
+        ]);
+
+        $course->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
+            'price' => $validated['is_free'] ? 0 : $validated['price'],
+            'is_free' => $validated['is_free'],
+            'is_active' => $validated['is_active'],
+            'requirements' => $validated['requirements'],
+            'what_you_learn' => $validated['what_you_learn'],
+            'target_audience' => $validated['target_audience'],
+            'language' => $validated['language'],
+            'level' => $validated['level'],
+            'duration_weeks' => $validated['duration_weeks'],
+            'slug' => \Str::slug($validated['title']),
+        ]);
+
+        // Update topics
+        if (isset($validated['topics'])) {
+            // Delete existing topics
+            $course->topics()->delete();
+            
+            // Create new topics
+            foreach ($validated['topics'] as $topicData) {
+                $topic = $course->topics()->create([
+                    'title' => $topicData['title'],
+                    'description' => $topicData['description'] ?? null,
+                    'duration' => $topicData['duration'] ?? null,
+                    'order' => $topicData['order'],
+                    'video_url' => $topicData['video_url'] ?? null,
+                    'notes' => $topicData['notes'] ?? null,
+                ]);
+
+                // Handle file uploads
+                if (isset($topicData['files']) && is_array($topicData['files'])) {
+                    foreach ($topicData['files'] as $file) {
+                        if ($file instanceof \Illuminate\Http\UploadedFile) {
+                            $fileName = time() . '_' . $file->getClientOriginalName();
+                            $filePath = $file->storeAs('topic-files', $fileName, 'public');
+                            
+                            $topic->files()->create([
+                                'filename' => $fileName,
+                                'original_name' => $file->getClientOriginalName(),
+                                'mime_type' => $file->getMimeType(),
+                                'size' => $file->getSize(),
+                                'path' => $filePath,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('instructor.courses')->with('success', 'Course updated successfully!');
+    }
+
+    public function createTest()
+    {
+        $categories = \App\Models\Category::all();
+        return Inertia::render('instructor/tests/create', [
+            'categories' => $categories,
+        ]);
+    }
+
+    public function storeTest(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'duration' => 'required|integer|min:1',
+            'total_questions' => 'required|integer|min:1',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'is_active' => 'boolean',
+            'passing_score' => 'nullable|integer|min:0|max:100',
+            'instructions' => 'nullable|string',
+        ]);
+
+        $test = MockTest::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
+            'instructor_id' => Auth::id(),
+            'duration_minutes' => $validated['duration'],
+            'total_questions' => $validated['total_questions'],
+            'start_time' => $validated['start_time'],
+            'end_time' => $validated['end_time'],
+            'is_active' => $validated['is_active'],
+            'passing_marks' => $validated['passing_score'] ?? 0,
+            'instructions' => $validated['instructions'] ?? null,
+            'slug' => \Str::slug($validated['title']),
+        ]);
+
+        return redirect()->route('instructor.tests')->with('success', 'Test created successfully!');
+    }
+
+    public function showTest(MockTest $test)
+    {
+        if ($test->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $test->load(['category', 'testResults.user']);
+
+        return Inertia::render('instructor/tests/show', [
+            'test' => $test,
+            'testResults' => $test->testResults,
+        ]);
+    }
+
+    public function editTest(MockTest $test)
+    {
+        if ($test->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $categories = \App\Models\Category::all();
+        
+        return Inertia::render('instructor/tests/edit', [
+            'test' => $test,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function updateTest(Request $request, MockTest $test)
+    {
+        if ($test->instructor_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'duration' => 'required|integer|min:1',
+            'total_questions' => 'required|integer|min:1',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'is_active' => 'boolean',
+            'passing_score' => 'nullable|integer|min:0|max:100',
+            'instructions' => 'nullable|string',
+        ]);
+
+        $test->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
+            'duration_minutes' => $validated['duration'],
+            'total_questions' => $validated['total_questions'],
+            'start_time' => $validated['start_time'],
+            'end_time' => $validated['end_time'],
+            'is_active' => $validated['is_active'],
+            'passing_marks' => $validated['passing_score'] ?? 0,
+            'instructions' => $validated['instructions'] ?? null,
+            'slug' => \Str::slug($validated['title']),
+        ]);
+
+        return redirect()->route('instructor.tests')->with('success', 'Test updated successfully!');
     }
 }

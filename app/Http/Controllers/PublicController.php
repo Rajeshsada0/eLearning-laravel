@@ -7,11 +7,105 @@ use App\Models\Course;
 use App\Models\MockTest;
 use App\Models\Category;
 use App\Models\CurrentAffair;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PublicController extends Controller
 {
+    public function login()
+    {
+        return Inertia::render('auth/login');
+    }
+
+    public function register()
+    {
+        return Inertia::render('auth/register');
+    }
+
+    public function loginPost(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            
+            $user = Auth::user();
+            $user->update(['last_login_at' => now()]);
+            
+            // Redirect based on user role
+            if ($user->isAdmin()) {
+                return redirect()->intended('/admin/dashboard');
+            } elseif ($user->isInstructor()) {
+                return redirect()->intended('/instructor/dashboard');
+            } else {
+                return redirect()->intended('/user/dashboard');
+            }
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
+
+    public function registerPost(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'is_active' => true,
+        ]);
+
+        // Assign student role by default
+        $studentRole = Role::where('name', 'student')->first();
+        if ($studentRole) {
+            $user->roles()->attach($studentRole->id);
+        }
+
+        Auth::login($user);
+
+        return redirect('/user/dashboard')->with('success', 'Registration successful! Welcome to Mindpyxle Academy!');
+    }
+
+    public function logout(Request $request)
+    {
+        // Get current user before logout for logging
+        $user = Auth::user();
+        
+        // Logout the user
+        Auth::logout();
+        
+        // Invalidate the session
+        $request->session()->invalidate();
+        
+        // Regenerate CSRF token
+        $request->session()->regenerateToken();
+        
+        // Clear all session data
+        $request->session()->flush();
+        
+        // Log the logout (optional)
+        \Log::info('User logged out', ['user_id' => $user?->id, 'email' => $user?->email]);
+        
+        return redirect('/')->with('success', 'Logged out successfully!');
+    }
+
     public function home(Request $request)
     {
         $courses = Course::with(['instructor', 'category'])

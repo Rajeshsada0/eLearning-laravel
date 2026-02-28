@@ -20,6 +20,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "@inertiajs/react": "^2.3.16"
+        "@inertiajs/react": "^2.3.16",
+        "lucide-react": "^0.575.0"
     }
 }
