@@ -23,7 +23,7 @@ export default function NavbarSimple() {
     // Try different approach to get auth data
     const page = usePage();
     const auth = page.props.auth;
-    const url = page.props.url;
+    const url = page.url; // Use page.url instead of page.props.url
 
     const isActive = (path) => {
         if (!url) return false;
@@ -32,6 +32,8 @@ export default function NavbarSimple() {
 
     // More robust authentication check
     const isAuthenticated = auth && auth.user && typeof auth.user === 'object' && auth.user.id;
+    const userName = auth?.user?.name || 'User';
+    const userEmail = auth?.user?.email || 'user@example.com';
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -127,7 +129,7 @@ export default function NavbarSimple() {
                                         <User className="w-5 h-5 text-white" />
                                     </div>
                                     <span className="font-medium">
-                                        {auth.user.name || 'User'}
+                                        {userName}
                                     </span>
                                     <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${
                                         isProfileDropdownOpen ? 'rotate-180' : ''
@@ -145,10 +147,10 @@ export default function NavbarSimple() {
                                                 </div>
                                                 <div>
                                                     <div className="text-white font-semibold">
-                                                        {auth.user.name || 'User'}
+                                                        {userName}
                                                     </div>
                                                     <div className="text-white/80 text-sm">
-                                                        {auth.user.email || 'user@example.com'}
+                                                        {userEmail}
                                                     </div>
                                                 </div>
                                             </div>
@@ -333,10 +335,10 @@ export default function NavbarSimple() {
                                                 </div>
                                                 <div>
                                                     <div className="font-semibold">
-                                                        {auth.user.name || 'User'}
+                                                        {userName}
                                                     </div>
                                                     <div className="text-white/80 text-sm">
-                                                        {auth.user.email || 'user@example.com'}
+                                                        {userEmail}
                                                     </div>
                                                 </div>
                                             </div>

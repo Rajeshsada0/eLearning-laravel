@@ -3,7 +3,7 @@ import { Head, usePage, router } from '@inertiajs/react';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import { 
-    Settings, 
+    Settings as SettingsIcon, 
     User, 
     Mail, 
     Bell, 
@@ -16,7 +16,7 @@ import {
     Smartphone
 } from 'lucide-react';
 
-export default function Settings() {
+export default function UserSettings() {
     const { user } = usePage().props;
     const [formData, setFormData] = useState({
         name: user?.name || '',
@@ -53,7 +53,7 @@ export default function Settings() {
                         <div className="max-w-4xl mx-auto">
                             <div className="flex items-center space-x-4">
                                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                                    <Settings className="w-8 h-8 text-white" />
+                                    <SettingsIcon className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
                                     <h1 className="text-2xl lg:text-3xl font-bold">Settings</h1>
@@ -73,7 +73,7 @@ export default function Settings() {
                                 {/* Profile Settings */}
                                 <div className="bg-white rounded-xl shadow-lg p-6">
                                     <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                        <User className="w-5 h-5 text-blue-600" />
+                                        <SettingsIconIcon className="w-5 h-5 text-gray-600" />
                                         Profile Settings
                                     </h2>
                                     
