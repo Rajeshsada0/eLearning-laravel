@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\CurrentAffair;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -295,5 +296,139 @@ class PublicController extends Controller
     public function contact()
     {
         return Inertia::render('contact');
+    }
+
+    public function enrollCourse(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('message', 'Please login to enroll in courses');
+        }
+
+        $course = Course::findOrFail($id);
+        $user = Auth::user();
+
+        // Check if already enrolled
+        $existingEnrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+
+        if ($existingEnrollment) {
+            return back()->with('error', 'You are already enrolled in this course');
+        }
+
+        // Create enrollment
+        Enrollment::create([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+            'enrolled_at' => now(),
+            'status' => 'active'
+        ]);
+
+        return redirect()->route('user.dashboard')->with('success', 'Successfully enrolled in ' . $course->title);
+    }
+
+    public function addToCart(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('message', 'Please login to add courses to cart');
+        }
+
+        $course = Course::findOrFail($id);
+        $user = Auth::user();
+
+        // Get cart from session
+        $cart = session()->get('cart', []);
+
+        // Check if already in cart
+        if (isset($cart[$course->id])) {
+            return back()->with('error', 'Course is already in your cart');
+        }
+
+        // Add to cart
+        $cart[$course->id] = [
+            'id' => $course->id,
+            'title' => $course->title,
+            'price' => $course->price,
+            'is_free' => $course->is_free,
+            'instructor' => $course->instructor->name,
+            'category' => $course->category->name,
+            'image' => $course->image,
+            'added_at' => now()
+        ];
+
+        session()->put('cart', $cart);
+
+        return back()->with('success', 'Course added to cart successfully');
+    }
+
+    public function cart(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('message', 'Please login to view your cart');
+        }
+
+        $cart = session()->get('cart', []);
+        $total = collect($cart)->sum(function ($item) {
+            return $item['is_free'] ? 0 : $item['price'];
+        });
+
+        return Inertia::render('cart', [
+            'cart' => array_values($cart),
+            'total' => $total,
+            'count' => count($cart)
+        ]);
+    }
+
+    public function removeFromCart(Request $request, $courseId)
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$courseId])) {
+            unset($cart[$courseId]);
+            session()->put('cart', $cart);
+        }
+
+        return back()->with('success', 'Course removed from cart');
+    }
+
+    public function checkout(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('message', 'Please login to checkout');
+        }
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return back()->with('error', 'Your cart is empty');
+        }
+
+        $user = Auth::user();
+        $total = collect($cart)->sum(function ($item) {
+            return $item['is_free'] ? 0 : $item['price'];
+        });
+
+        // Process payment and enrollments (simplified for demo)
+        foreach ($cart as $courseId => $item) {
+            // Check if already enrolled
+            $existingEnrollment = Enrollment::where('user_id', $user->id)
+                ->where('course_id', $courseId)
+                ->first();
+
+            if (!$existingEnrollment) {
+                // Create enrollment
+                Enrollment::create([
+                    'user_id' => $user->id,
+                    'course_id' => $courseId,
+                    'enrolled_at' => now(),
+                    'status' => 'active'
+                ]);
+            }
+        }
+
+        // Clear cart
+        session()->forget('cart');
+
+        return redirect()->route('user.dashboard')->with('success', 'Payment successful! You are now enrolled in all courses.');
     }
 }

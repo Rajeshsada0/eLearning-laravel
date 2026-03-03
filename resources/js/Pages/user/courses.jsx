@@ -33,8 +33,8 @@ export default function UserCourses({ enrollments, filters }) {
                             <div key={enrollment.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                                 <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600"></div>
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-lg mb-2">{enrollment.course?.title}</h3>
-                                    <p className="text-gray-600 text-sm mb-4">{enrollment.course?.description}</p>
+                                    <h3 className="font-semibold text-lg mb-2">{enrollment.course?.title || 'Untitled Course'}</h3>
+                                    <p className="text-gray-600 text-sm mb-4">{enrollment.course?.description || 'No description available'}</p>
                                     
                                     <div className="mb-4">
                                         <div className="flex justify-between text-sm text-gray-600 mb-1">
@@ -58,12 +58,12 @@ export default function UserCourses({ enrollments, filters }) {
                                             {enrollment.completed_at ? 'Completed' : 'In Progress'}
                                         </span>
                                         <span className="text-sm text-gray-500">
-                                            Enrolled: {new Date(enrollment.created_at).toLocaleDateString()}
+                                            Enrolled: {enrollment.created_at ? new Date(enrollment.created_at).toLocaleDateString() : 'Unknown date'}
                                         </span>
                                     </div>
 
                                     <Link
-                                        href={`/courses/${enrollment.course_id}`}
+                                        href={`/user/courses/${enrollment.course_id}/learn`}
                                         className="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition"
                                     >
                                         Continue Learning
@@ -99,11 +99,13 @@ export default function UserCourses({ enrollments, filters }) {
                                 {enrollments.links.map((link, index) => (
                                     <Link
                                         key={index}
-                                        href={link.url}
+                                        href={link.url || '#'}
                                         className={`px-3 py-2 rounded-md ${
                                             link.active
                                                 ? 'bg-blue-600 text-white'
-                                                : 'bg-white text-gray-700 hover:bg-gray-100'
+                                                : link.url
+                                                    ? 'bg-white text-gray-700 hover:bg-gray-100'
+                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                         }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />

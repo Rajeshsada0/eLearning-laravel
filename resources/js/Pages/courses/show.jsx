@@ -1,5 +1,5 @@
-import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
 import { 
@@ -28,8 +28,26 @@ import {
 } from 'lucide-react';
 
 export default function CourseShow({ course, relatedCourses }) {
+    const [isEnrolling, setIsEnrolling] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
     const isInstructor = course.instructor;
     const isEnrolled = course.enrollments && course.enrollments.length > 0;
+
+    const handleBuyNow = () => {
+        setIsEnrolling(true);
+        router.post(`/courses/${course.id}/enroll`, {}, {
+            onSuccess: () => setIsEnrolling(false),
+            onError: () => setIsEnrolling(false),
+        });
+    };
+
+    const handleAddToCart = () => {
+        setIsAddingToCart(true);
+        router.post(`/courses/${course.id}/add-to-cart`, {}, {
+            onSuccess: () => setIsAddingToCart(false),
+            onError: () => setIsAddingToCart(false),
+        });
+    };
 
     return (
         <>
@@ -254,13 +272,39 @@ export default function CourseShow({ course, relatedCourses }) {
                                         </div>
                                     ) : (
                                         <div className="space-y-2 lg:space-y-3">
-                                            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition w-full font-medium flex items-center justify-center gap-2 text-xs lg:text-sm">
-                                                <Zap className="w-3 h-3 lg:w-4 lg:h-4" />
-                                                {course.is_free ? 'Enroll Now' : 'Buy Now'}
+                                            <button 
+                                                onClick={handleBuyNow}
+                                                disabled={isEnrolling}
+                                                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition w-full font-medium flex items-center justify-center gap-2 text-xs lg:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isEnrolling ? (
+                                                    <>
+                                                        <div className="w-3 h-3 lg:w-4 lg:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                        Processing...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Zap className="w-3 h-3 lg:w-4 lg:h-4" />
+                                                        {course.is_free ? 'Enroll Now' : 'Buy Now'}
+                                                    </>
+                                                )}
                                             </button>
-                                            <button className="border-2 border-blue-600 text-blue-600 px-3 py-2 lg:px-4 lg:py-2 rounded-lg hover:bg-blue-50 transition w-full font-medium flex items-center justify-center gap-2 text-xs lg:text-sm">
-                                                <ShoppingCart className="w-3 h-3 lg:w-4 lg:h-4" />
-                                                Add to Cart
+                                            <button 
+                                                onClick={handleAddToCart}
+                                                disabled={isAddingToCart}
+                                                className="border-2 border-blue-600 text-blue-600 px-3 py-2 lg:px-4 lg:py-2 rounded-lg hover:bg-blue-50 transition w-full font-medium flex items-center justify-center gap-2 text-xs lg:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isAddingToCart ? (
+                                                    <>
+                                                        <div className="w-3 h-3 lg:w-4 lg:h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                                        Adding...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ShoppingCart className="w-3 h-3 lg:w-4 lg:h-4" />
+                                                        Add to Cart
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     )}

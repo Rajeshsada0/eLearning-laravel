@@ -11,7 +11,8 @@ import {
     Shield,
     TrendingUp,
     Menu,
-    X
+    X,
+    ShoppingCart
 } from 'lucide-react';
 import { router } from '@inertiajs/react';
 
@@ -116,6 +117,16 @@ export default function NavbarSimple() {
                             Contact
                         </Link>
                     </div>
+
+                    {/* Cart Link */}
+                    <Link
+                        href="/cart"
+                        className="hidden md:flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors relative"
+                    >
+                        <ShoppingCart className="w-5 h-5" />
+                        <span className="font-medium">Cart</span>
+                        {/* Cart count badge - will be implemented later */}
+                    </Link>
 
                     {/* Desktop auth buttons */}
                     <div className="hidden md:flex items-center space-x-4">
@@ -323,6 +334,7 @@ export default function NavbarSimple() {
                             <Link href="/current-affairs" onClick={() => setIsMenuOpen(false)}>Current Affairs</Link>
                             <Link href="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
                             <Link href="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+                            <Link href="/cart" onClick={() => setIsMenuOpen(false)}>Cart</Link>
 
                             <div className="pt-4 mt-4 border-t border-gray-200">
                                 {isAuthenticated ? (

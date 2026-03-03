@@ -9,6 +9,7 @@ use App\Models\MockTest;
 use App\Models\Enrollment;
 use App\Models\TestResult;
 use App\Models\Progress;
+use App\Models\Topic;
 use App\Models\CurrentAffair;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,25 @@ class UserDashboardController extends Controller
                 ->avg('percentage') ?? 0,
         ];
 
+        // Calculate progress for each enrolled course
+        $progress = [];
+        foreach ($enrolledCourses as $enrollment) {
+            $totalTopics = $enrollment->course->topics()->count();
+            $completedTopics = $enrollment->course->topics()
+                ->whereHas('progress', function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->whereNotNull('completed_at');
+                })
+                ->count();
+            
+            $progressPercentage = $totalTopics > 0 ? ($completedTopics / $totalTopics) * 100 : 0;
+            
+            $progress[$enrollment->course->id] = [
+                'completed_topics' => $completedTopics,
+                'total_topics' => $totalTopics,
+                'percentage' => round($progressPercentage, 1)
+            ];
+        }
+
         $recommendedCourses = Course::where('is_active', true)
             ->whereNotIn('id', $enrolledCourses->pluck('course_id'))
             ->inRandomOrder()
@@ -72,19 +92,105 @@ class UserDashboardController extends Controller
         $enrollments = Enrollment::with(['course.instructor', 'course.category'])
             ->where('user_id', $user->id)
             ->when($request->status, function ($query, $status) {
-                if ($status === 'completed') {
-                    $query->whereNotNull('completed_at');
-                } elseif ($status === 'in_progress') {
+                if ($status === 'in_progress') {
                     $query->whereNull('completed_at');
+                } elseif ($status === 'completed') {
+                    $query->whereNotNull('completed_at');
                 }
             })
-            ->latest()
             ->paginate(12);
 
         return Inertia::render('user/courses', [
             'enrollments' => $enrollments,
-            'filters' => $request->only(['status']),
+            'filters' => $request->only(['status'])
         ]);
+    }
+
+    public function learnCourse(Request $request, $id)
+    {
+        $user = Auth::user();
+        
+        // Check if user is enrolled in this course
+        $enrollment = Enrollment::with(['course'])
+            ->where('user_id', $user->id)
+            ->where('course_id', $id)
+            ->first();
+            
+        if (!$enrollment) {
+            return redirect()->route('user.courses')->with('error', 'You are not enrolled in this course');
+        }
+
+        // Get course with topics and materials
+        $course = Course::with([
+            'topics' => function ($query) {
+                $query->where('is_active', true)->orderBy('order');
+            },
+            'topics.materials' => function ($query) {
+                $query->where('is_active', true)->orderBy('order');
+            },
+            'topics.progress' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            },
+            'instructor'
+        ])->findOrFail($id);
+
+        // Get user progress for each topic
+        $progress = [];
+        foreach ($course->topics as $topic) {
+            $userProgress = $topic->progress->where('user_id', $user->id)->first();
+            $progress[$topic->id] = [
+                'completed' => $userProgress ? $userProgress->completed_at !== null : false,
+                'time_spent' => $userProgress ? $userProgress->time_spent : 0,
+                'percentage' => $userProgress ? $userProgress->percentage : 0
+            ];
+        }
+
+        return Inertia::render('user/learn', [
+            'course' => $course,
+            'enrollment' => $enrollment,
+            'progress' => $progress
+        ]);
+    }
+
+    public function markTopicComplete(Request $request, $courseId, $topicId)
+    {
+        $user = Auth::user();
+        
+        // Check if user is enrolled in this course
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $courseId)
+            ->first();
+            
+        if (!$enrollment) {
+            return response()->json(['error' => 'You are not enrolled in this course'], 403);
+        }
+
+        // Check if topic exists and belongs to course
+        $topic = Topic::where('id', $topicId)
+            ->where('course_id', $courseId)
+            ->first();
+            
+        if (!$topic) {
+            return response()->json(['error' => 'Topic not found'], 404);
+        }
+
+        // Create or update progress
+        $progress = Progress::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'topic_id' => $topicId,
+                'course_id' => $courseId,
+            ],
+            [
+                'completed_at' => now(),
+                'percentage' => 100,
+                'time_spent' => $request->input('time_spent', 0),
+                'last_accessed_at' => now(),
+            ]
+        );
+
+        // Return back with success message
+        return back()->with('success', 'Topic marked as complete');
     }
 
     public function tests(Request $request)
