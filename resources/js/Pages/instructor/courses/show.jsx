@@ -37,7 +37,7 @@ function ShowCourse({ course }) {
                         {course.thumbnail && (
                             <div className="mb-6">
                                 <img 
-                                    src={course.thumbnail} 
+                                    src={`/storage/thumbnails/${course.thumbnail}`} 
                                     alt={course.title}
                                     className="w-full h-64 object-cover rounded-lg"
                                 />

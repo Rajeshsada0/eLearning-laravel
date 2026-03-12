@@ -19,7 +19,7 @@ export default function Login() {
 
     return (
         <>
-            <Head title="Login - Mindpyxle Academy" />
+            <Head title="Login - Infinite Education" />
             <Navbar />
             
             <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

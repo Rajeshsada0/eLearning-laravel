@@ -2,19 +2,23 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
+import UserSidebar from '../../Components/UserSidebar';
 
 export default function UserTests({ testResults, filters }) {
     return (
         <>
-            <Head title="My Tests - Mindpyxle Academy" />
-            <Navbar />
+            {/* <Head title="My Tests - Infinite Education" />
+            <Navbar /> */}
             
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Tests</h1>
-                        <p className="text-gray-600">View your test results and performance</p>
-                    </div>
+            <div className="min-h-screen bg-gray-50 flex">
+                <UserSidebar />
+                
+                <div className="flex-1 lg:ml-0">
+                    <div className="container mx-auto px-4 py-8">
+                        <div className="mb-8">
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Tests</h1>
+                            <p className="text-gray-600">View your test results and performance</p>
+                        </div>
 
                     {/* Filters */}
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -145,11 +149,13 @@ export default function UserTests({ testResults, filters }) {
                                 {testResults.links.map((link, index) => (
                                     <Link
                                         key={index}
-                                        href={link.url}
+                                        href={link.url || '#'}
                                         className={`px-3 py-2 rounded-md ${
                                             link.active
                                                 ? 'bg-blue-600 text-white'
-                                                : 'bg-white text-gray-700 hover:bg-gray-100'
+                                                : link.url
+                                                    ? 'bg-white text-gray-700 hover:bg-gray-100'
+                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                         }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
@@ -157,6 +163,7 @@ export default function UserTests({ testResults, filters }) {
                             </div>
                         </div>
                     )}
+                </div>
                 </div>
             </div>
 

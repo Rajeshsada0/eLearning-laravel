@@ -113,7 +113,7 @@ export default function Contact() {
 
     return (
         <>
-            <Head title="Contact Us - Mindpyxle Academy" />
+            <Head title="Contact Us - Infinite Education" />
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
                 <Navbar />
                 
@@ -311,7 +311,7 @@ export default function Contact() {
                                                     </div>
                                                     <div>
                                                         <div className="font-semibold text-gray-900">Email</div>
-                                                        <div className="text-gray-600">info@mindpyxle.com</div>
+                                                        <div className="text-gray-600">info@Infinite.com</div>
                                                         <div className="text-sm text-gray-500">We'll respond within 24 hours</div>
                                                     </div>
                                                 </div>

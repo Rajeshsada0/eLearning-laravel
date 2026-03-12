@@ -6,7 +6,7 @@ import Footer from '../Components/Footer';
 export default function Welcome({ courses, featuredCourses, categories, currentAffairs, upcomingTests }) {
     return (
         <>
-            <Head title="Welcome to Mindpyxle Academy" />
+            <Head title="Welcome to Infinite Education" />
             <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 
@@ -15,7 +15,7 @@ export default function Welcome({ courses, featuredCourses, categories, currentA
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto text-center">
                             <h1 className="text-5xl font-bold mb-6">
-                                Welcome to Mindpyxle Academy
+                                Welcome to Infinite Education
                             </h1>
                             <p className="text-xl mb-8">
                                 Excel in your exams with comprehensive courses, mock tests, and expert guidance

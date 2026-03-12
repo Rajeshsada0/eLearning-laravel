@@ -20,7 +20,7 @@ import {
 export default function About() {
     return (
         <>
-            <Head title="About Us - Mindpyxle Academy" />
+            <Head title="About Us - Infinite Education" />
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
                 <Navbar />
                 
@@ -34,7 +34,7 @@ export default function About() {
                                     <GraduationCap className="w-10 h-10 text-white" />
                                 </div>
                             </div>
-                            <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">About Mindpyxle Academy</h1>
+                            <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">About Infinite Education</h1>
                             <p className="text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto">
                                 Empowering students to achieve their academic dreams
                             </p>
@@ -57,7 +57,7 @@ export default function About() {
                             </div>
                             <h2 className="text-3xl lg:text-4xl font-bold mb-8">Our Mission</h2>
                             <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-12 max-w-4xl mx-auto">
-                                At Mindpyxle Academy, we are committed to providing high-quality education and comprehensive 
+                                At Infinite Education, we are committed to providing high-quality education and comprehensive 
                                 exam preparation to help students achieve their goals. Our platform combines expert instruction, 
                                 cutting-edge technology, and personalized learning to create an unparalleled educational experience.
                             </p>

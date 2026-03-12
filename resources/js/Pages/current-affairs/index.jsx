@@ -19,7 +19,7 @@ export default function CurrentAffairsIndex({ currentAffairs, categories, filter
 
     return (
         <>
-            <Head title="Current Affairs - Mindpyxle Academy" />
+            <Head title="Current Affairs - Infinite Education" />
             <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 

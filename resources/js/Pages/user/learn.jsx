@@ -122,7 +122,7 @@ export default function LearnCourse({ course, enrollment, progress }) {
 
     return (
         <>
-            <Head title={`${course.title} - Learning - Mindpyxle Academy`} />
+            <Head title={`${course.title} - Learning - Infinite Education`} />
             
             <div className="min-h-screen bg-gray-50">
                 {/* Header */}

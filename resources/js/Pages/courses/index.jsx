@@ -6,7 +6,7 @@ import Footer from '../../Components/Footer';
 export default function CoursesIndex({ courses, categories, filters }) {
     return (
         <>
-            <Head title="Courses - Mindpyxle Academy" />
+            <Head title="Courses - Infinite Education" />
             <Navbar />
             
             <div className="min-h-screen bg-gray-50">

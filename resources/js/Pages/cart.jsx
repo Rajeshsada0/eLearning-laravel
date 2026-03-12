@@ -33,7 +33,7 @@ export default function Cart({ cart, total, count }) {
 
     return (
         <>
-            <Head title="Shopping Cart - Mindpyxle Academy" />
+            <Head title="Shopping Cart - Infinite Education" />
             <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 

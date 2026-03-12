@@ -1,7 +1,8 @@
 import React from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Navbar from '../../Components/Navbar';
 import Footer from '../../Components/Footer';
+import UserSidebar from '../../Components/UserSidebar';
 import { 
     User, 
     Mail, 
@@ -20,45 +21,28 @@ export default function Profile() {
 
     return (
         <>
-            <Head title="My Profile - Mindpyxle Academy" />
-            <div className="min-h-screen bg-gray-50">
-                <Navbar />
+            <Head title="My Profile - Infinite Education" />
+            <div className="min-h-screen bg-gray-50 flex">
+                <UserSidebar />
                 
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
-                    <div className="container mx-auto px-4">
+                <div className="flex-1 lg:ml-0">
+                    <div className="container mx-auto px-4 py-8">
                         <div className="max-w-4xl mx-auto">
-                            <div className="flex items-center space-x-4">
-                                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                                    <User className="w-8 h-8 text-white" />
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl lg:text-3xl font-bold">My Profile</h1>
-                                    <p className="text-blue-100">Manage your personal information and preferences</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Profile Content */}
-                <div className="container mx-auto px-4 py-8">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Main Profile Info */}
-                            <div className="lg:col-span-2 space-y-6">
-                                {/* Personal Information */}
-                                <div className="bg-white rounded-xl shadow-lg p-6">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                            <User className="w-5 h-5 text-blue-600" />
-                                            Personal Information
-                                        </h2>
-                                        <button className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
-                                            <Edit className="w-4 h-4" />
-                                            Edit
-                                        </button>
-                                    </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Main Profile Info */}
+                                <div className="lg:col-span-2 space-y-6">
+                                    {/* Personal Information */}
+                                    <div className="bg-white rounded-xl shadow-lg p-6">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                                <User className="w-5 h-5 text-blue-600" />
+                                                Personal Information
+                                            </h2>
+                                            <button className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                                                <Edit className="w-4 h-4" />
+                                                Edit
+                                            </button>
+                                        </div>
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
@@ -223,9 +207,10 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-
-                <Footer />
+                </div>
             </div>
+
+            <Footer />
         </>
     );
 }

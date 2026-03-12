@@ -71,7 +71,7 @@ function InstructorLayout({ children, title }) {
 
     return (
         <div className="flex h-screen bg-gray-100">
-            <Head title={`${title} - Instructor - Mindpyxle Academy`} />
+            <Head title={`${title} - Instructor - Infinite Education`} />
             
             {/* Mobile sidebar backdrop */}
             {sidebarOpen && (
@@ -133,7 +133,7 @@ function InstructorLayout({ children, title }) {
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm font-medium text-gray-900">Instructor</p>
-                                <p className="text-xs text-gray-500">instructor@mindpyxle.com</p>
+                                <p className="text-xs text-gray-500">instructor@Infinite.com</p>
                             </div>
                         </div>
                         <div className="mt-2 px-4">

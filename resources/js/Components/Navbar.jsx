@@ -57,10 +57,10 @@ export default function NavbarSimple() {
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
                         <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">M</span>
+                            <span className="text-white font-bold text-xl">I</span>
                         </div>
                         <span className="text-xl font-bold text-gray-800">
-                            Mindpyxle Academy
+                            Infinite Education
                         </span>
                     </Link>
 

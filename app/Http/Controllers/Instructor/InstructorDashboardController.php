@@ -187,6 +187,7 @@ class InstructorDashboardController extends Controller
             'price' => 'nullable|numeric|min:0',
             'is_free' => 'boolean',
             'is_active' => 'boolean',
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:10240', // 10MB max
             'requirements' => 'nullable|string',
             'what_you_learn' => 'nullable|string',
             'target_audience' => 'nullable|string',
@@ -211,6 +212,13 @@ class InstructorDashboardController extends Controller
             'duration_weeks' => $validated['duration_weeks'],
             'slug' => \Str::slug($validated['title']),
         ]);
+
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail');
+            $thumbnailPath = $thumbnail->store('/', 'public');
+            $course->update(['thumbnail' => $thumbnailPath]);
+        }
 
         return redirect()->route('instructor.courses')->with('success', 'Course created successfully!');
     }
@@ -255,6 +263,7 @@ class InstructorDashboardController extends Controller
             'price' => 'nullable|numeric|min:0',
             'is_free' => 'boolean',
             'is_active' => 'boolean',
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:10240', // 10MB max
             'requirements' => 'nullable|string',
             'what_you_learn' => 'nullable|string',
             'target_audience' => 'nullable|string',
@@ -287,6 +296,13 @@ class InstructorDashboardController extends Controller
             'duration_weeks' => $validated['duration_weeks'],
             'slug' => \Str::slug($validated['title']),
         ]);
+
+        // Handle thumbnail upload
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $request->file('thumbnail');
+            $thumbnailPath = $thumbnail->store('/', 'public');
+            $course->update(['thumbnail' => $thumbnailPath]);
+        }
 
         // Update topics
         if (isset($validated['topics'])) {

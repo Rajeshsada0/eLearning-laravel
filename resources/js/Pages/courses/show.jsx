@@ -51,7 +51,7 @@ export default function CourseShow({ course, relatedCourses }) {
 
     return (
         <>
-            <Head title={`${course.title} - Mindpyxle Academy`} />
+            <Head title={`${course.title} - Infinite Education`} />
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
                 <Navbar />
                 

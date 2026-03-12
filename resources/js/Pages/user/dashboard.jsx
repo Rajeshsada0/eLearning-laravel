@@ -34,92 +34,57 @@ export default function Dashboard({ enrolledCourses, recentTests, progress, stat
         {
             title: 'Dashboard',
             icon: Home,
-            href: '/user/dashboard',
-            color: 'blue'
+            href: '/user/dashboard'
         },
         {
             title: 'My Courses',
             icon: BookOpen,
-            href: '/user/courses',
-            color: 'purple'
+            href: '/user/courses'
         },
         {
             title: 'Tests',
             icon: FileText,
-            href: '/user/tests',
-            color: 'green'
+            href: '/user/tests'
         },
         {
             title: 'Current Affairs',
             icon: Globe,
-            href: '/user/current-affairs',
-            color: 'orange'
+            href: '/user/current-affairs'
         },
         {
             title: 'Study Materials',
             icon: Brain,
-            href: '/user/study-materials',
-            color: 'indigo'
+            href: '/user/study-materials'
         },
         {
             title: 'Progress',
             icon: TrendingUp,
-            href: '/user/progress',
-            color: 'pink'
+            href: '/user/progress'
         },
         {
             title: 'Profile',
             icon: Users,
-            href: '/user/profile',
-            color: 'cyan'
+            href: '/user/profile'
         },
         {
             title: 'Settings',
             icon: Settings,
-            href: '/user/settings',
-            color: 'gray'
+            href: '/user/settings'
         },
         {
             title: 'Support',
             icon: HelpCircle,
-            href: '/user/support',
-            color: 'red'
+            href: '/user/support'
         }
     ];
 
-    const getColorClasses = (color) => {
-        const colors = {
-            blue: 'bg-blue-500 text-white',
-            purple: 'bg-purple-500 text-white',
-            green: 'bg-green-500 text-white',
-            orange: 'bg-orange-500 text-white',
-            indigo: 'bg-indigo-500 text-white',
-            pink: 'bg-pink-500 text-white',
-            cyan: 'bg-cyan-500 text-white',
-            gray: 'bg-gray-500 text-white',
-            red: 'bg-red-500 text-white'
-        };
-        return colors[color] || colors.blue;
-    };
-
-    const getHoverClasses = (color) => {
-        const colors = {
-            blue: 'hover:bg-blue-600',
-            purple: 'hover:bg-purple-600',
-            green: 'hover:bg-green-600',
-            orange: 'hover:bg-orange-600',
-            indigo: 'hover:bg-indigo-600',
-            pink: 'hover:bg-pink-600',
-            cyan: 'hover:bg-cyan-600',
-            gray: 'hover:bg-gray-600',
-            red: 'hover:bg-red-600'
-        };
-        return colors[color] || colors.blue;
+    const isActive = (href) => {
+        return window.location.pathname === href;
     };
 
     return (
         <>
-            <Head title="Dashboard - Mindpyxle Academy" />
+            <Head title="Dashboard - Infinite Education" />
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
                 {/* Mobile Menu Toggle */}
                 <div className="lg:hidden fixed top-4 left-4 z-50">
@@ -132,58 +97,61 @@ export default function Dashboard({ enrolledCourses, recentTests, progress, stat
                 </div>
 
                 {/* Sidebar */}
-                <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:inset-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:inset-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="flex flex-col h-full">
                         {/* Sidebar Header */}
-                        <div className="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                        <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                                    <GraduationCap className="w-6 h-6 text-white" />
+                                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                                    <GraduationCap className="w-5 h-5 text-gray-700" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold">Mindpyxle</h2>
-                                    <p className="text-blue-100 text-sm">Student Portal</p>
+                                    <h2 className="text-lg font-semibold text-gray-900">Infinite</h2>
+                                    <p className="text-sm text-gray-500">Student Portal</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* User Info */}
-                        <div className="p-4 border-b border-gray-200">
+                        {/* <div className="p-4 border-b border-gray-100">
                             <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                                    <Users className="w-5 h-5 text-white" />
+                                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <Users className="w-4 h-4 text-gray-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-900">{auth?.user?.name || 'Student'}</div>
-                                    <div className="text-sm text-gray-600">{auth?.user?.email || 'student@example.com'}</div>
+                                    <div className="text-sm font-medium text-gray-900">{auth?.user?.name || 'Student'}</div>
+                                    <div className="text-xs text-gray-500">{auth?.user?.email || 'student@example.com'}</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Navigation Menu */}
-                        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                             {menuItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${getColorClasses(item.color)} ${getHoverClasses(item.color)} text-white`}
+                                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                        isActive(item.href)
+                                            ? 'bg-gray-100 text-gray-900 border-l-2 border-gray-900'
+                                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
                                 >
-                                    <item.icon className="w-5 h-5" />
-                                    <span className="font-medium">{item.title}</span>
-                                    <ChevronRight className="w-4 h-4 ml-auto" />
+                                    <item.icon className="w-4 h-4" />
+                                    <span>{item.title}</span>
                                 </Link>
                             ))}
                         </nav>
 
                         {/* Logout Button */}
-                        <div className="p-4 border-t border-gray-200">
+                        <div className="p-4 border-t border-gray-100">
                             <Link
                                 href="/logout"
                                 method="post"
-                                className="flex items-center space-x-3 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                className="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200"
                             >
-                                <LogOut className="w-5 h-5" />
-                                <span className="font-medium">Logout</span>
+                                <LogOut className="w-4 h-4" />
+                                <span>Logout</span>
                             </Link>
                         </div>
                     </div>

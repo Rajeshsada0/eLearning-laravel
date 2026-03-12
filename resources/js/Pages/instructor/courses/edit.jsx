@@ -20,6 +20,7 @@ function EditCourse({ course, categories }) {
         price: course.price || '',
         is_free: course.is_free || false,
         is_active: course.is_active || true,
+        thumbnail: course.thumbnail || null,
         requirements: course.requirements || '',
         what_you_learn: course.what_you_learn || '',
         target_audience: course.target_audience || '',
@@ -199,6 +200,78 @@ function EditCourse({ course, categories }) {
                                     />
                                     {errors.description && (
                                         <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                                    )}
+                                </div>
+
+                                {/* Thumbnail Upload */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Course Thumbnail
+                                    </label>
+                                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                                        <div className="space-y-1 text-center">
+                                            {data.thumbnail || course.thumbnail ? (
+                                                <div className="relative">
+                                                    <img
+                                                        src={data.thumbnail && typeof data.thumbnail === 'object' 
+                                                            ? URL.createObjectURL(data.thumbnail) 
+                                                            : (data.thumbnail ? `/storage/${data.thumbnail}` : `/storage/${course.thumbnail}`)}
+                                                        alt="Course thumbnail preview"
+                                                        className="mx-auto h-32 w-32 object-cover rounded-lg shadow-md"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setData('thumbnail', null)}
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <svg
+                                                        className="mx-auto h-12 w-12 text-gray-400"
+                                                        stroke="currentColor"
+                                                        fill="none"
+                                                        viewBox="0 0 48 48"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <path
+                                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                                            strokeWidth={2}
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                    <div className="flex text-sm text-gray-600">
+                                                        <label
+                                                            htmlFor="thumbnail-upload-edit"
+                                                            className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                                                        >
+                                                            <span>Upload a file</span>
+                                                            <input
+                                                                id="thumbnail-upload-edit"
+                                                                name="thumbnail-upload-edit"
+                                                                type="file"
+                                                                className="sr-only"
+                                                                accept="image/*"
+                                                                onChange={(e) => setData('thumbnail', e.target.files[0])}
+                                                                key={data.thumbnail ? 'has-thumbnail' : 'no-thumbnail'}
+                                                            />
+                                                        </label>
+                                                        <p className="pl-1">or drag and drop</p>
+                                                    </div>
+                                                    <p className="text-xs text-gray-500">
+                                                        PNG, JPG, GIF up to 10MB
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {errors.thumbnail && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.thumbnail}</p>
                                     )}
                                 </div>
 

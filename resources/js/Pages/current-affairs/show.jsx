@@ -6,7 +6,7 @@ import Footer from '../../Components/Footer';
 export default function CurrentAffairShow({ currentAffair, related }) {
     return (
         <>
-            <Head title={`${currentAffair.title} - Current Affairs - Mindpyxle Academy`} />
+            <Head title={`${currentAffair.title} - Current Affairs - Infinite Education`} />
             <Navbar />
             
             <div className="min-h-screen bg-gray-50">

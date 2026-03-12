@@ -10,9 +10,9 @@ export default function Footer() {
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
                             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-xl">M</span>
+                                <span className="text-white font-bold text-xl">I</span>
                             </div>
-                            <span className="text-xl font-bold">Mindpyxle Academy</span>
+                            <span className="text-xl font-bold">Infinite Education</span>
                         </div>
                         <p className="text-gray-400 mb-4">
                             Empowering students to achieve their academic dreams through quality education and comprehensive exam preparation.
@@ -125,7 +125,7 @@ export default function Footer() {
                             </div>
                             <div className="flex items-center space-x-3">
                                 <span className="text-blue-400">✉️</span>
-                                <span className="text-gray-400">info@mindpyxle.com</span>
+                                <span className="text-gray-400">info@Infinite.com</span>
                             </div>
                         </div>
                         
@@ -150,7 +150,7 @@ export default function Footer() {
                 <div className="border-t border-gray-800 mt-12 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <div className="text-gray-400 text-sm">
-                            © 2024 Mindpyxle Academy. All rights reserved.
+                            © 2024 Infinite Education. All rights reserved.
                         </div>
                         <div className="flex space-x-6 mt-4 md:mt-0">
                             <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition">

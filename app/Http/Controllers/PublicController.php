@@ -81,7 +81,7 @@ class PublicController extends Controller
 
         Auth::login($user);
 
-        return redirect('/user/dashboard')->with('success', 'Registration successful! Welcome to Mindpyxle Academy!');
+        return redirect('/user/dashboard')->with('success', 'Registration successful! Welcome to Infinite Education!');
     }
 
     public function logout(Request $request)

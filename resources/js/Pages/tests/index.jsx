@@ -19,7 +19,7 @@ export default function TestsIndex({ tests, categories, filters }) {
 
     return (
         <>
-            <Head title="Mock Tests - Mindpyxle Academy" />
+            <Head title="Mock Tests - Infinite Education" />
             <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 

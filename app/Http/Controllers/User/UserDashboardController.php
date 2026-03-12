@@ -11,6 +11,7 @@ use App\Models\TestResult;
 use App\Models\Progress;
 use App\Models\Topic;
 use App\Models\CurrentAffair;
+use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -103,6 +104,81 @@ class UserDashboardController extends Controller
         return Inertia::render('user/courses', [
             'enrollments' => $enrollments,
             'filters' => $request->only(['status'])
+        ]);
+    }
+
+    public function progress(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Get all enrollments with courses and progress
+        $enrollments = Enrollment::with(['course', 'course.topics'])
+            ->where('user_id', $user->id)
+            ->get();
+
+        // Calculate progress for each course
+        $courseProgress = [];
+        $overallStats = [
+            'total_courses' => $enrollments->count(),
+            'completed_courses' => 0,
+            'in_progress_courses' => 0,
+            'total_topics' => 0,
+            'completed_topics' => 0,
+            'total_time_spent' => 0
+        ];
+
+        foreach ($enrollments as $enrollment) {
+            $course = $enrollment->course;
+            $topics = $course->topics ?? collect([]);
+            
+            $totalTopics = $topics->count();
+            $completedTopics = 0;
+            $timeSpent = 0;
+
+            foreach ($topics as $topic) {
+                $progress = Progress::where('user_id', $user->id)
+                    ->where('topic_id', $topic->id)
+                    ->first();
+                
+                if ($progress && $progress->completed_at) {
+                    $completedTopics++;
+                    $timeSpent += $progress->time_spent ?? 0;
+                }
+            }
+
+            $progressPercentage = $totalTopics > 0 ? ($completedTopics / $totalTopics) * 100 : 0;
+            $isCompleted = $progressPercentage >= 100;
+
+            $courseProgress[] = [
+                'course' => $course,
+                'total_topics' => $totalTopics,
+                'completed_topics' => $completedTopics,
+                'progress_percentage' => round($progressPercentage, 1),
+                'time_spent' => $timeSpent,
+                'is_completed' => $isCompleted,
+                'enrollment_date' => $enrollment->created_at
+            ];
+
+            // Update overall stats
+            $overallStats['total_topics'] += $totalTopics;
+            $overallStats['completed_topics'] += $completedTopics;
+            $overallStats['total_time_spent'] += $timeSpent;
+            
+            if ($isCompleted) {
+                $overallStats['completed_courses']++;
+            } else {
+                $overallStats['in_progress_courses']++;
+            }
+        }
+
+        // Calculate overall progress percentage
+        $overallStats['overall_progress'] = $overallStats['total_topics'] > 0 
+            ? round(($overallStats['completed_topics'] / $overallStats['total_topics']) * 100, 1)
+            : 0;
+
+        return Inertia::render('user/progress', [
+            'courseProgress' => $courseProgress,
+            'overallStats' => $overallStats
         ]);
     }
 

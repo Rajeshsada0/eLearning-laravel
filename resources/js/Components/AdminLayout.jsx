@@ -72,7 +72,7 @@ function AdminLayout({ children, title }) {
 
     return (
         <div className="flex h-screen bg-gray-100">
-            <Head title={`${title} - Admin - Mindpyxle Academy`} />
+            <Head title={`${title} - Admin - Infinite Education`} />
             
             {/* Mobile sidebar backdrop */}
             {sidebarOpen && (
@@ -134,7 +134,7 @@ function AdminLayout({ children, title }) {
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm font-medium text-gray-900">Admin User</p>
-                                <p className="text-xs text-gray-500">admin@mindpyxle.com</p>
+                                <p className="text-xs text-gray-500">admin@Infinite.com</p>
                             </div>
                         </div>
                         <div className="mt-2 px-4">

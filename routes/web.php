@@ -70,6 +70,7 @@ Route::prefix('user')->middleware(['auth', 'role:student'])->name('user.')->grou
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [UserDashboardController::class, 'profile'])->name('profile');
     Route::get('/courses', [UserDashboardController::class, 'courses'])->name('courses');
+    Route::get('/progress', [UserDashboardController::class, 'progress'])->name('progress');
     Route::get('/courses/{id}/learn', [UserDashboardController::class, 'learnCourse'])->name('courses.learn');
     Route::post('/courses/{courseId}/topics/{topicId}/complete', [UserDashboardController::class, 'markTopicComplete'])->name('courses.topic.complete');
     Route::get('/tests', [UserDashboardController::class, 'tests'])->name('tests');
